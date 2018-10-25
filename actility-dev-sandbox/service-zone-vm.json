@@ -1,0 +1,223 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmSpec": {
+      "type": "array",
+      "metadata": {
+        "description": "Name of the VMs"
+      }
+    },
+    "imageId": {
+      "type": "string",
+      "metadata": {
+        "description": "Id of the existing image"
+      }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the VNET"
+      }
+    },
+    "virtualNetworkResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the VNET resource group"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "User name for the Virtual Machine."
+      }
+    },
+    "authenticationType": {
+      "type": "string",
+      "defaultValue": "password",
+      "allowedValues": [
+        "password",
+        "sshPublicKey"
+      ],
+      "metadata": {
+        "description": "Type of authentication to use on the Virtual Machine."
+      }
+    },
+    "adminPasswordOrKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Password or ssh key for the Virtual Machine."
+      }
+    }
+  },
+  "variables": {
+    "linuxConfiguration": {
+      "disablePasswordAuthentication": true,
+      "ssh": {
+        "publicKeys": [
+          {
+            "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+            "keyData": "[parameters('adminPasswordOrKey')]"
+          }
+        ]
+      }
+    }
+  },
+  "resources": [
+    {
+      "condition": "[equals(parameters('vmSpec')[copyIndex()].publicIP,'TRUE')]",
+      "apiVersion": "2018-04-01",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[concat('publicIP_',parameters('vmSpec')[copyIndex()].vmName)]",
+      "copy": {
+        "name": "publicipcopy",
+        "count": "[length(parameters('vmSpec'))]"
+      },
+      "location": "[parameters('location')]",
+      "tags": {
+        "displayName": "PublicIPAddress"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic"
+      }
+    },
+    {
+      "apiVersion": "2018-04-01",
+      "type": "Microsoft.Network/networkInterfaces",
+      "copy": {
+        "name": "nic0copy",
+        "count": "[length(parameters('vmSpec'))]"
+      },
+      "name": "[concat('nic0_',parameters('vmSpec')[copyIndex()].vmName)]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('publicIP_',parameters('vmSpec')[copyIndex()].vmName)]"
+      ],
+      "tags": {
+        "displayName": "NetworkInterface"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[parameters('vmSpec')[copyIndex()].nic0staticIp]",
+              "publicIPAddress": "[if(equals(parameters('vmSpec')[copyIndex()].publicIP,'TRUE'),json(concat('{\"id\": \"',resourceId('Microsoft.Network/publicIPAddresses',concat('publicIP_',parameters('vmSpec')[copyIndex()].vmName)),'\"}')),json('null'))]",
+              "subnet": {
+                "id": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'),  parameters('vmSpec')[copyIndex()].nic0subnet)]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-04-01",
+      "condition": "[not(equals(parameters('vmSpec')[copyIndex()].nic1staticIp,'null'))]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "copy": {
+        "name": "nic1copy",
+        "count": "[length(parameters('vmSpec'))]"
+      },
+      "name": "[concat('nic1_',parameters('vmSpec')[copyIndex()].vmName)]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "displayName": "NetworkInterface"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[parameters('vmSpec')[copyIndex()].nic1staticIp]",
+              "subnet": {
+                "id": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('vmSpec')[copyIndex()].nic1subnet)]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-04-01",
+      "comments": "VirtualMachine with 2 Network Interfaces",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[parameters('vmSpec')[copyIndex()].vmName]",
+      "copy": {
+        "name": "vmcopy",
+        "count": "[length(parameters('vmSpec'))]"
+      },
+      "location": "[parameters('location')]",
+      "tags": {
+        "displayName": "VirtualMachine"
+      },
+      "dependsOn": [
+        "[concat('nic0_',parameters('vmSpec')[copyIndex()].vmName)]",
+        "[concat('nic1_',parameters('vmSpec')[copyIndex()].vmName)]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSpec')[copyIndex()].vmSize]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('vmSpec')[copyIndex()].vmName]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPasswordOrKey')]",
+          "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
+        },
+        "storageProfile": {
+          "imageReference": {
+              "id": "[parameters('imageId')]"
+          },
+          "dataDisks": "[if(not(equals(parameters('vmSpec')[copyIndex()].vmDataDisk,'null')),json(concat('[{\"diskSizeGB\": \"',parameters('vmSpec')[copyIndex()].vmDataDisk,'\",\"lun\": 0,\"createOption\": \"Empty\", \"caching\": \"None\", \"managedDisk\": { \"storageAccountType\": \"Standard_LRS\" },  \"name\": \"',concat(parameters('vmSpec')[copyIndex()].vmName,'-datadisk'),'\"}]')),json('null'))]"
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat('nic0_',parameters('vmSpec')[copyIndex()].vmName))]",
+              "properties": {
+                "primary": true
+              }
+            },
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat('nic1_',parameters('vmSpec')[copyIndex()].vmName))]",
+              "properties": {
+                "primary": false
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('vmSpec')[0].vmName,'/','extensions')]",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmSpec')[0].vmName)]"
+      ],
+      "tags": {
+        "displayName": "config-app"
+      },
+      "properties": {
+        "publisher": "Microsoft.Azure.Extensions",
+        "type": "CustomScript",
+        "typeHandlerVersion": "2.0",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+           "commandToExecute": "echo \"pJqbP2IY2WBs\" > pass.tmp;sudo -S rootsh < pass.tmp;echo -e \"DEVICE=eth1\nONBOOT=yes\nBOOTPROTO=dhcp\nTYPE=Ethernet\nUSERCTL=no\nPEERDNS=yes\nIPV6INIT=no\";echo \"10.0.10.0/24 via 10.0.11.1 dev eth1\" | sudo tee -a /etc/sysconfig/network-scripts/route-eth1;sudo ifup eth1;rm pass.tmp"
+        }
+      }
+    }
+  ]
+}

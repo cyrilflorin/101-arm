@@ -1,0 +1,73 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmSpec": {
+            "value": [
+                {
+                    "vmName": "ZK-MASTER",
+                    "vmSize": "Standard_F2s_v2",
+                    "vmDataDisk": "null",
+                    "nic0staticIp": "10.0.3.90",
+                    "nic0subnet": "subnet-green-service",
+                    "nic0nsg": "nsg-green-service",
+                    "nic0asg0": "asg-zk-master-service",
+                    "nic0asg1": "asg-green-service",
+                    "publicIP": "FALSE",
+                    "nic1staticIp": "10.0.13.90",
+                    "nic1subnet": "subnet-green-admin",
+                    "nic1nsg": "nsg-green-admin",
+                    "nic1asg0": "asg-zk-master-admin",
+                    "nic1asg1": "asg-green-admin"
+                },
+                {
+                    "vmName": "MG-NODE",
+                    "vmSize": "Standard_E4s_v3",
+                    "vmDataDisk": "256",
+                    "nic0staticIp": "10.0.3.34",
+                    "nic0subnet": "subnet-green-service",
+                    "nic0nsg": "nsg-green-service",
+                    "nic0asg0": "asg-mg-node-service",
+                    "nic0asg1": "asg-orange-service",
+                    "publicIP": "FALSE",
+                    "nic1staticIp": "10.0.13.34",
+                    "nic1subnet": "subnet-green-admin",
+                    "nic1nsg": "nsg-green-admin",
+                    "nic1asg0": "asg-mg-node-admin",
+                    "nic1asg1": "asg-green-admin"
+                },
+                {
+                    "vmName": "SQL",
+                    "vmSize": "Standard_E8s_v3",
+                    "vmDataDisk": "256",
+                    "nic0staticIp": "10.0.3.1",
+                    "nic0subnet": "subnet-green-service",
+                    "nic0nsg": "nsg-green-service",
+                    "nic0asg0": "asg-sql-service",
+                    "nic0asg1": "asg-orange-service",
+                    "publicIP": "FALSE",
+                    "nic1staticIp": "10.0.13.1",
+                    "nic1subnet": "subnet-green-admin",
+                    "nic1nsg": "nsg-green-admin",
+                    "nic1asg0": "asg-sql-admin",
+                    "nic1asg1": "asg-green-admin"
+                }
+            ]
+        },
+        "virtualNetworkName": {
+            "value": "vnet-dev-service"
+        },
+        "virtualNetworkResourceGroup": {
+            "value": "actility-ocp-dev"
+        },
+        "imageId": {
+            "value": "/subscriptions/ca4aac28-a514-4213-9cc4-6b7618fb063e/resourceGroups/actility-ocp-dev/providers/Microsoft.Compute/images/acy_centos_6.9"
+        },
+        "adminUsername": {
+            "value": "tech"
+        },
+        "adminPasswordOrKey": {
+            "value": "pJqbP2IY2WBs"
+        }
+    }
+}

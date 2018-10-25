@@ -1,0 +1,169 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmSpec": {
+            "value": [
+                {
+                    "vmName": "AS-SMP",
+                    "vmSize": "Standard_D4s_v3",
+                    "vmDataDisk": "null",
+                    "nic0staticIp": "10.0.2.100",
+                    "nic0subnet": "subnet-orange-service",
+                    "nic0nsg": "nsg-orange-service",
+                    "nic0asg0": "asg-as-smp-service",
+                    "nic0asg1": "asg-orange-service",
+                    "publicIP": "FALSE",
+                    "nic1staticIp": "10.0.12.100",
+                    "nic1subnet": "subnet-orange-admin",
+                    "nic1nsg": "nsg-orange-admin",
+                    "nic1asg0": "asg-as-smp-admin",
+                    "nic1asg1": "asg-orange-admin"
+                },
+                {
+                    "vmName": "AS-TWA",
+                    "vmSize": "Standard_D16s_v3",
+                    "vmDataDisk": "20",
+                    "nic0staticIp": "10.0.2.50",
+                    "nic0subnet": "subnet-orange-service",
+                    "nic0nsg": "nsg-orange-service",
+                    "nic0asg0": "asg-as-twa-service",
+                    "nic0asg1": "asg-orange-service",
+                    "publicIP": "FALSE",
+                    "nic1staticIp": "10.0.12.50",
+                    "nic1subnet": "subnet-orange-admin",
+                    "nic1nsg": "nsg-orange-admin",
+                    "nic1asg0": "asg-as-twa-admin",
+                    "nic1asg1": "asg-orange-admin"
+                },
+                {
+                    "vmName": "AS-PORTAL",
+                    "vmSize": "Standard_D4s_v3",
+                    "vmDataDisk": "null",
+                    "nic0staticIp": "10.0.2.161",
+                    "nic0subnet": "subnet-orange-service",
+                    "nic0nsg": "nsg-orange-service",
+                    "nic0asg0": "asg-as-portal-service",
+                    "nic0asg1": "asg-orange-service",
+                    "publicIP": "FALSE",
+                    "nic1staticIp": "10.0.12.161",
+                    "nic1subnet": "subnet-orange-admin",
+                    "nic1nsg": "nsg-orange-admin",
+                    "nic1asg0": "asg-as-portal-admin",
+                    "nic1asg1": "asg-orange-admin"
+                },
+                {
+                    "vmName": "AS-WLOGGER",
+                    "vmSize": "Standard_D4s_v3",
+                    "vmDataDisk": "null",
+                    "nic0staticIp": "10.0.2.153",
+                    "nic0subnet": "subnet-orange-service",
+                    "nic0nsg": "nsg-orange-service",
+                    "nic0asg0": "asg-as-wlogger-service",
+                    "nic0asg1": "asg-orange-service",
+                    "publicIP": "FALSE",
+                    "nic1staticIp": "10.0.12.153",
+                    "nic1subnet": "subnet-orange-admin",
+                    "nic1nsg": "nsg-orange-admin",
+                    "nic1asg0": "asg-as-wlogger-admin",
+                    "nic1asg1": "asg-orange-admin"
+                },
+                {
+                    "vmName": "AS-RCA",
+                    "vmSize": "Standard_D2s_v3",
+                    "vmDataDisk": "null",
+                    "nic0staticIp": "10.0.2.112",
+                    "nic0subnet": "subnet-orange-service",
+                    "nic0nsg": "nsg-orange-service",
+                    "nic0asg0": "asg-as-rca-service",
+                    "nic0asg1": "asg-orange-service",
+                    "publicIP": "FALSE",
+                    "nic1staticIp": "10.0.12.112",
+                    "nic1subnet": "subnet-orange-admin",
+                    "nic1nsg": "nsg-orange-admin",
+                    "nic1asg0": "asg-as-rca-admin",
+                    "nic1asg1": "asg-orange-admin"
+                },
+                {
+                    "vmName": "PROXY-AS",
+                    "vmSize": "Standard_F2s_v2",
+                    "vmDataDisk": "null",
+                    "nic0staticIp": "10.0.2.9",
+                    "nic0subnet": "subnet-orange-service",
+                    "nic0nsg": "nsg-orange-service",
+                    "nic0asg0": "asg-proxy-as-service",
+                    "nic0asg1": "asg-orange-service",
+                    "publicIP": "FALSE",
+                    "nic1staticIp": "10.0.12.9",
+                    "nic1subnet": "subnet-orange-admin",
+                    "nic1nsg": "nsg-orange-admin",
+                    "nic1asg0": "asg-proxy-as-admin",
+                    "nic1asg1": "asg-orange-admin"
+                },
+                {
+                    "vmName": "KK-BROKER",
+                    "vmSize": "Standard_D2s_v3",
+                    "vmDataDisk": "128",
+                    "nic0staticIp": "10.0.3.91",
+                    "nic0subnet": "subnet-orange-service",
+                    "nic0nsg": "nsg-orange-service",
+                    "nic0asg0": "asg-kk-broker-service",
+                    "nic0asg1": "asg-orange-service",
+                    "publicIP": "FALSE",
+                    "nic1staticIp": "10.0.13.91",
+                    "nic1subnet": "subnet-orange-admin",
+                    "nic1nsg": "nsg-orange-admin",
+                    "nic1asg0": "asg-kk-broker-admin",
+                    "nic1asg1": "asg-orange-admin"
+                },
+                {
+                    "vmName": "DCOS-BOOTSTRAP",
+                    "vmSize": "Standard_F2s_v2",
+                    "vmDataDisk": "null",
+                    "nic0staticIp": "10.0.2.10",
+                    "nic0subnet": "subnet-orange-service",
+                    "nic0nsg": "nsg-orange-service",
+                    "nic0asg0": "asg-dcos-bootstrap-service",
+                    "nic0asg1": "asg-orange-service",
+                    "publicIP": "FALSE",
+                    "nic1staticIp": "10.0.12.10",
+                    "nic1subnet": "subnet-orange-admin",
+                    "nic1nsg": "nsg-orange-admin",
+                    "nic1asg0": "asg-dcos-bootstrap-admin",
+                    "nic1asg1": "asg-orange-admin"
+                },
+                {
+                    "vmName": "DCOS-AS",
+                    "vmSize": "Standard_F16s_v2",
+                    "vmDataDisk": "64",
+                    "nic0staticIp": "10.0.2.11",
+                    "nic0subnet": "subnet-orange-service",
+                    "nic0nsg": "nsg-orange-service",
+                    "nic0asg0": "asg-dcos-as-service",
+                    "nic0asg1": "asg-orange-service",
+                    "publicIP": "FALSE",
+                    "nic1staticIp": "10.0.12.11",
+                    "nic1subnet": "subnet-orange-admin",
+                    "nic1nsg": "nsg-orange-admin",
+                    "nic1asg0": "asg-dcos-as-admin",
+                    "nic1asg1": "asg-orange-admin"
+                }
+            ]
+        },
+        "virtualNetworkName": {
+            "value": "vnet-dev-service"
+        },
+        "virtualNetworkResourceGroup": {
+            "value": "actility-ocp-dev"
+        },
+        "imageId": {
+            "value": "/subscriptions/ca4aac28-a514-4213-9cc4-6b7618fb063e/resourceGroups/actility-ocp-dev/providers/Microsoft.Compute/images/acy_centos_6.9"
+        },
+        "adminUsername": {
+            "value": "tech"
+        },
+        "adminPasswordOrKey": {
+            "value": "pJqbP2IY2WBs"
+        }
+    }
+}

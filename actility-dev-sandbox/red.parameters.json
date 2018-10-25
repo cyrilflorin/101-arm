@@ -1,0 +1,41 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmSpec": {
+            "value": [
+                {
+                    "vmName": "LRC",
+                    "vmSize": "Standard_E16s_v3",
+                    "vmDataDisk": "1024",
+                    "nic0staticIp": "10.0.1.9",
+                    "nic0subnet": "subnet-red-service",
+                    "nic0nsg": "nsg-red-service",
+                    "nic0asg0": "asg-lrc-service",
+                    "nic0asg1": "asg-red-service",
+                    "publicIP": "TRUE",
+                    "nic1staticIp": "10.0.11.9",
+                    "nic1subnet": "subnet-red-admin",
+                    "nic1nsg": "nsg-red-admin",
+                    "nic1asg0": "asg-lrc-admin",
+                    "nic1asg1": "asg-red-admin"
+                }
+            ]
+        },
+        "virtualNetworkName": {
+            "value": "vnet-dev-service"
+        },
+        "virtualNetworkResourceGroup": {
+            "value": "actility-ocp-dev"
+        },
+        "imageId": {
+            "value": "/subscriptions/ca4aac28-a514-4213-9cc4-6b7618fb063e/resourceGroups/actility-ocp-dev/providers/Microsoft.Compute/images/acy_centos_6.9"
+        },
+        "adminUsername": {
+            "value": "tech"
+        },
+        "adminPasswordOrKey": {
+            "value": "pJqbP2IY2WBs"
+        }
+    }
+}
